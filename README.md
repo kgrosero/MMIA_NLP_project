@@ -17,7 +17,7 @@ You are responsible for implementing core components of Llama2 in the following 
 - `rope.py` - Rotary position embeddings
 - `lora.py` - LoRA implementation
 
-You will work with `stories42M.pt`, an 8-layer, 42M parameter language model pretrained on the [TinyStories](https://arxiv.org/abs/2305.07759) dataset (machine-generated children's stories). This model is small enough to train with a small GPU.
+You will work with `stories42M.pt`, an 8-layer, 42M parameter language model pretrained on the [TinyStories](https://arxiv.org/abs/2305.07759) dataset (machine-generated children's stories). This model is small enough to train with a small GPU. Please download the .pt file from [this link](https://drive.google.com/file/d/17OUXqSXK8Q8Flo2_cTGhc6n4hvqZqu3D/view?usp=sharing) and place it into the main directory.
 
 ### Background Theory
 
