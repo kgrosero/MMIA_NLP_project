@@ -1,6 +1,6 @@
-# Min-Llama Assignment 1
+# MMIA-NLP CLass Project
 
-This is an exercise for developing a minimalist version of Llama2.
+## Build a Mini-Llama, a minimalist version of Llama2.
 
 ## Overview
 
@@ -8,7 +8,7 @@ In this assignment, you will implement important components of the Llama2 model 
 
 ## Assignment Details
 
-### Your Task
+### Your Tasks
 
 You are responsible for implementing core components of Llama2 in the following files:
 - `llama.py` - Main model architecture
@@ -17,7 +17,166 @@ You are responsible for implementing core components of Llama2 in the following 
 - `rope.py` - Rotary position embeddings
 - `lora.py` - LoRA implementation
 
-You will work with `stories42M.pt`, an 8-layer, 42M parameter language model pretrained on the [TinyStories](https://arxiv.org/abs/2305.07759) dataset (machine-generated children's stories). This model is small enough to train without a GPU, though using Colab or a personal GPU is recommended for faster iteration.
+You will work with `stories42M.pt`, an 8-layer, 42M parameter language model pretrained on the [TinyStories](https://arxiv.org/abs/2305.07759) dataset (machine-generated children's stories). This model is small enough to train with a small GPU.
+
+### Background Theory
+
+1. **LayerNorm (Layer Normalization)**
+In this assignment, we will use LayerNorm instead of RMSNorm (which is used in Llama2). You will implement LayerNorm in llama.py. This normalization operates across features for each data point, reducing internal covariate shift, stabilizing gradients, and accelerating training.
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <msub>
+    <mrow data-mjx-texclass="ORD">
+      <mover>
+        <mi>a</mi>
+        <mo stretchy="false">&#xAF;</mo>
+      </mover>
+    </mrow>
+    <mi>i</mi>
+  </msub>
+  <mo>=</mo>
+  <mfrac>
+    <mrow>
+      <msub>
+        <mi>a</mi>
+        <mi>i</mi>
+      </msub>
+      <mo>&#x2212;</mo>
+      <mi>&#x3BC;</mi>
+    </mrow>
+    <mi>&#x3C3;</mi>
+  </mfrac>
+  <msub>
+    <mi>g</mi>
+    <mi>i</mi>
+  </msub>
+  <mo>,</mo>
+</math>
+
+Here, āi is the normalized input, g is a learnable gain, and μ, σ are the mean and standard deviation of inputs a:
+
+ <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>&#x3BC;</mi>
+  <mo>=</mo>
+  <mfrac>
+    <mn>1</mn>
+    <mi>n</mi>
+  </mfrac>
+  <munderover>
+    <mo data-mjx-texclass="OP">&#x2211;</mo>
+    <mrow data-mjx-texclass="ORD">
+      <mi>i</mi>
+      <mo>=</mo>
+      <mn>1</mn>
+    </mrow>
+    <mrow data-mjx-texclass="ORD">
+      <mi>n</mi>
+    </mrow>
+  </munderover>
+  <msub>
+    <mi>a</mi>
+    <mi>i</mi>
+  </msub>
+  <mo>,</mo>
+  <mstyle scriptlevel="0">
+    <mspace width="1em"></mspace>
+  </mstyle>
+  <mi>&#x3C3;</mi>
+  <mo>=</mo>
+  <msqrt>
+    <mfrac>
+      <mn>1</mn>
+      <mi>n</mi>
+    </mfrac>
+    <munderover>
+      <mo data-mjx-texclass="OP">&#x2211;</mo>
+      <mrow data-mjx-texclass="ORD">
+        <mi>i</mi>
+        <mo>=</mo>
+        <mn>1</mn>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mi>n</mi>
+      </mrow>
+    </munderover>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>i</mi>
+    </msub>
+    <mo>&#x2212;</mo>
+    <mi>&#x3BC;</mi>
+    <msup>
+      <mo stretchy="false">)</mo>
+      <mn>2</mn>
+    </msup>
+  </msqrt>
+  <mo>.</mo>
+</math>
+
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>&#x3BC;</mi>
+  <mo>=</mo>
+  <mfrac>
+    <mn>1</mn>
+    <mi>n</mi>
+  </mfrac>
+  <munderover>
+    <mo data-mjx-texclass="OP">&#x2211;</mo>
+    <mrow data-mjx-texclass="ORD">
+      <mi>i</mi>
+      <mo>=</mo>
+      <mn>1</mn>
+    </mrow>
+    <mrow data-mjx-texclass="ORD">
+      <mi>n</mi>
+    </mrow>
+  </munderover>
+  <msub>
+    <mi>a</mi>
+    <mi>i</mi>
+  </msub>
+  <mo>,</mo>
+  <mstyle scriptlevel="0">
+    <mspace width="1em"></mspace>
+  </mstyle>
+  <mi>&#x3C3;</mi>
+  <mo>=</mo>
+  <msqrt>
+    <mfrac>
+      <mn>1</mn>
+      <mi>n</mi>
+    </mfrac>
+    <munderover>
+      <mo data-mjx-texclass="OP">&#x2211;</mo>
+      <mrow data-mjx-texclass="ORD">
+        <mi>i</mi>
+        <mo>=</mo>
+        <mn>1</mn>
+      </mrow>
+      <mrow data-mjx-texclass="ORD">
+        <mi>n</mi>
+      </mrow>
+    </munderover>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>a</mi>
+      <mi>i</mi>
+    </msub>
+    <mo>&#x2212;</mo>
+    <mi>&#x3BC;</mi>
+    <msup>
+      <mo stretchy="false">)</mo>
+      <mn>2</mn>
+    </msup>
+  </msqrt>
+  <mo>.</mo>
+</math>
+ 
+LayerNorm makes activations independent of input scale and weights to improve stability.
+
+Reference: Layer Normalization (Ba et al., 2016)
 
 ### Testing Your Implementation
 
