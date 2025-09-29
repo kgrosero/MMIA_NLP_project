@@ -2,7 +2,7 @@
 ## Assignment Checklist
 
 ### Setup & Environment
-- [ ] Run `bash setup.sh` successfully
+- [ ] Use `bash setup.sh` as guidance for installation, but feel free to change the versions as needed
 - [ ] Verify model weights downloaded (stories42M.pt)
 
 ### Core Implementation
@@ -24,15 +24,3 @@
 - [ ] Complete SST LoRA fine-tuning
 - [ ] Complete CFIMDB LoRA fine-tuning
 
-### Advanced Features (Optional - A+)
-- [ ] Other advanced techniques (see A+ options above)
-- [ ] Write 1-2 page report documenting improvements
-
-### Submission Preparation
-- [ ] Generate all required output files
-- [ ] Validate submission with `python3 prepare_submit.py`
-- [ ] Verify file size < 10MB
-- [ ] Create zip file with proper ANDREWID structure
-- [ ] Include optional report and feedback files
-- [ ] Final submission check before Canvas upload
-  
