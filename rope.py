@@ -52,8 +52,7 @@ def apply_rotary_emb(
     device = query.device
     # todo
     #
-    # Please refer to Lecture 5 slides in https://cmu-l3.github.io/anlp-fall2025/static_files/anlp-f2025-05-transformers.pdf
-    # and Section 3 in https://arxiv.org/abs/2104.09864.
+    # Please refer to Section 3 in https://arxiv.org/abs/2104.09864.
 
     # reshape xq and xk to match the complex representation
     query_real, query_imag = query.float().reshape(query.shape[:-1] + (-1, 2)).unbind(-1)
